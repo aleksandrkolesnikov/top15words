@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtCharts 2.15
-//import QtQml 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
 
@@ -16,7 +15,7 @@ ApplicationWindow {
         title: "Please choose a file"
         folder: shortcuts.home
         selectMultiple: false
-        onAccepted: editor.text = fileDialog.fileUrl
+        onAccepted: editor.acceptText(fileDialog.fileUrl)
     }
 
     ColumnLayout {
@@ -33,7 +32,7 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
 
-                onTextChanged: dataModel.setFile(editor.text)
+                onAccepted: dataModel.setFile(editor.text)
             }
 
             Button {
