@@ -35,8 +35,7 @@ signals:
 private:
     void updateTop15Words(const WordSet& wordSet);
     void mergeWords(const WordSet& wordSet);
-
-    virtual void timerEvent(QTimerEvent* event) override;
+    void sort();
 
 private:
     WordsProvider wordsProvider;

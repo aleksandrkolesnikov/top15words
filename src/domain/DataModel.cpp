@@ -1,6 +1,7 @@
 #include "DataModel.h"
 #include <QUrl>
 #include <QTimerEvent>
+#include <algorithm>
 
 namespace top15words::domain
 {
@@ -12,8 +13,6 @@ DataModel::DataModel(QObject* parent)
     top15words.reserve(30);
 
     QObject::connect(&wordsProvider, &WordsProvider::sendWords, this, &DataModel::wordsReceived);
-
-    //startTimer(4000);
 }
 
 DataModel::~DataModel()
@@ -23,7 +22,7 @@ DataModel::~DataModel()
 
 int DataModel::columnCount([[maybe_unused]] const QModelIndex& parent) const
 {
-    return top15words.size();
+    return static_cast<int>(top15words.size());
 }
 
 QVariant DataModel::data(const QModelIndex& index, int role) const
@@ -73,7 +72,10 @@ void DataModel::updateTop15Words(const WordSet& wordSet)
     if (top15words.empty())
     {
         beginInsertColumns(QModelIndex{}, 0, static_cast<int>(wordSet.size()));
+
         top15words = wordSet;
+        sort();
+
         endInsertColumns();
 
         emit maxFreqChanged();
@@ -82,13 +84,6 @@ void DataModel::updateTop15Words(const WordSet& wordSet)
     {
         mergeWords(wordSet);
     }
-
-
-    /* std::sort(top15words.begin(), top15words.end(),
-                [](const auto& left, const auto& right)
-                {
-                    return left.first < right.first;
-                });*/
 }
 
 void DataModel::mergeWords(const WordSet& wordSet)
@@ -108,29 +103,36 @@ void DataModel::mergeWords(const WordSet& wordSet)
                     return left.second > right.second;
                 });
 
-    // beginInsertColumns(QModelIndex{}, 0, static_cast<int>(words.size()));
     top15words.erase(top15words.cbegin() + std::min(15ull, top15words.size()), top15words.cend());
-    // endInsertColumns();
-    emit maxFreqChanged();
-    // QMetaObject::invokeMethod(this, "maxFreqChanged", Qt::QueuedConnection);
+    sort();
 
-    emit dataChanged(createIndex(0, 0), createIndex(1, (int)top15words.size()), {Qt::DisplayRole});
-    // const auto index1 = createIndex(0, 0);
-    // const auto index2 = createIndex(1, (int)top15words.size());
-    // QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection, Q_ARG(QModelIndex, index1),
-    // Q_ARG(QModelIndex, index2));
+    emit maxFreqChanged();
+
+    emit dataChanged(createIndex(0, 0), createIndex(0, (int)top15words.size()), {Qt::DisplayRole});
 }
 
-void DataModel::timerEvent(QTimerEvent* event)
+void DataModel::sort()
 {
-    killTimer(event->timerId());
-
-    setFile(QStringLiteral("C:/Users/ivche/Documents/Projects/2gis_test/sample3.txt"));
+    std::sort(top15words.begin(), top15words.end(),
+                [](const auto& left, const auto& right)
+                {
+                    return left.first < right.first;
+                });
 }
 
 int DataModel::maxFreq() const
 {
-    return top15words.empty() ? 0 : static_cast<int>(top15words[0].second);
+    if (top15words.empty())
+    {
+        return 0;
+    }
+
+    const auto t = std::max_element(top15words.cbegin(), top15words.cend(),
+                                    [](const auto& left, const auto& right)
+                                    {
+                                        return left.second < right.second;
+                                    });
+    return t->second;
 }
 
 }
