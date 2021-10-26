@@ -1,12 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtCharts 2.15
-import QtQml 2.15
+//import QtQml 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
 
-ApplicationWindow
-{
+ApplicationWindow {
     visible: true
     title: "Top 15 Words"
     height: 700
@@ -17,61 +16,57 @@ ApplicationWindow
         title: "Please choose a file"
         folder: shortcuts.home
         selectMultiple: false
-        onAccepted: {
-            dataModel.setFile(fileDialog.fileUrl)
-            //console.log("You chose: " + fileDialog.fileUrls)
-            //Qt.quit()
-        }
-        onRejected: {
-            //console.log("Canceled")
-            //Qt.quit()
-        }
-        //Component.onCompleted: visible = true
+        onAccepted: editor.text = fileDialog.fileUrl
     }
 
-    ColumnLayout
-    {
+    ColumnLayout {
         anchors.fill: parent
+        anchors.topMargin: 5
+        anchors.bottomMargin: 5
+        anchors.leftMargin: 5
+        anchors.rightMargin: 5
 
-        Button
-        {
-            id: text
-            text: "Select File"
-            Layout.alignment: Qt.AlignCenter
-            Layout.preferredWidth: 120
-            Layout.preferredHeight: 50
+        RowLayout {
 
-            onClicked: fileDialog.visible = true
+            FilePathEditor {
+                id: editor
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+
+                onTextChanged: dataModel.setFile(editor.text)
+            }
+
+            Button {
+                text: "Browse..."
+                Layout.alignment: Qt.AlignRight
+                Layout.preferredWidth: 120
+                Layout.preferredHeight: 40
+
+                onClicked: fileDialog.visible = true
+            }
         }
 
-        ChartView
-        {
+        ChartView {
             id: chartView
             title: "Top 15 Words"
-            //anchors.fill: parent
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             legend.alignment: Qt.AlignBottom
             antialiasing: true
-            Layout.alignment: Qt.AlignBottom
-            Layout.preferredWidth: parent.width
-            Layout.preferredHeight: parent.height - 10
 
-            BarSeries
-            {
-                ValueAxis
-                {
+            BarSeries {
+                ValueAxis {
                     id: yAxis
                     min: 0
                     max: dataModel.maxFreq
                 }
 
-                BarCategoryAxis
-                {
+                BarCategoryAxis {
                     id: barAxis
                     categories: [" "]
                 }
 
-                VBarModelMapper
-                {
+                VBarModelMapper {
                     model: dataModel
                     firstBarSetColumn: 0
                     lastBarSetColumn: 15

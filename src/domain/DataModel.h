@@ -1,14 +1,10 @@
 #pragma once
 
+#include "WordsProvider.h"
 #include <QAbstractTableModel>
-#include <QString>
-#include <QTextStream>
-#include <vector>
 
 namespace top15words::domain
 {
-
-using Data = std::pair<QString, std::size_t>;
 
 class DataModel : public QAbstractTableModel
 {
@@ -27,20 +23,24 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 public slots:
-    void setFile(const QString& filePath);
+    void setFile(const QUrl& filePath);
     int maxFreq() const;
+
+private slots:
+    void wordsReceived(const WordSet& wordSet);
 
 signals:
     void maxFreqChanged() const;
 
 private:
-    void processFile(const QString& filePath);
-    void updateTop15Words(std::vector<Data>&& words);
+    void updateTop15Words(const WordSet& wordSet);
+    void mergeWords(const WordSet& wordSet);
 
     virtual void timerEvent(QTimerEvent* event) override;
 
 private:
-    std::vector<Data> top15words;
+    WordsProvider wordsProvider;
+    WordSet top15words;
 };
 
 }

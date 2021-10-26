@@ -25,4 +25,7 @@ class Top15WordsConan(ConanFile):
         cmtch = CMakeToolchain(self)
         cmtch.generate()
 
+    def imports(self):
+        self.copy("*.dll", "src/Debug", "bin")
+        #self.copy("*.dylib", "", "lib")
     
