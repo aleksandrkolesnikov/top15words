@@ -48,9 +48,11 @@ ApplicationWindow {
         ChartView {
             id: chartView
             title: "Top 15 Words"
+            titleFont.bold: true
             Layout.fillWidth: true
             Layout.fillHeight: true
             legend.alignment: Qt.AlignBottom
+            legend.font.bold: true
             antialiasing: true
 
             BarSeries {
@@ -58,6 +60,7 @@ ApplicationWindow {
                     id: yAxis
                     min: 0
                     max: dataModel.maxFreq
+                    labelsFont.bold: true
                 }
 
                 BarCategoryAxis {
@@ -68,7 +71,7 @@ ApplicationWindow {
                 VBarModelMapper {
                     model: dataModel
                     firstBarSetColumn: 0
-                    lastBarSetColumn: 15
+                    lastBarSetColumn: 14
                     firstRow: 0
                 }
 
