@@ -66,6 +66,7 @@ void DataModel::setFile(const QString& filePath)
     }
     else
     {
+        wordsProvider.stop();
         emit incorrectFilePassed();
     }
 }
@@ -82,7 +83,7 @@ void DataModel::updateTop15Words(const WordSet& wordSet)
         beginInsertColumns(QModelIndex{}, 0, static_cast<int>(wordSet.size()));
 
         top15words = wordSet;
-        sort();
+        sortByAlphabet();
 
         endInsertColumns();
 
@@ -112,14 +113,14 @@ void DataModel::mergeWords(const WordSet& wordSet)
                 });
 
     top15words.erase(top15words.cbegin() + std::min(15ull, top15words.size()), top15words.cend());
-    sort();
+    sortByAlphabet();
 
     emit maxFreqChanged();
 
     emit dataChanged(createIndex(0, 0), createIndex(0, (int)top15words.size()), {Qt::DisplayRole});
 }
 
-void DataModel::sort()
+void DataModel::sortByAlphabet()
 {
     std::sort(top15words.begin(), top15words.end(),
                 [](const auto& left, const auto& right)

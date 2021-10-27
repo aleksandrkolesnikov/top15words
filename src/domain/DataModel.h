@@ -36,7 +36,7 @@ signals:
 private:
     void updateTop15Words(const WordSet& wordSet);
     void mergeWords(const WordSet& wordSet);
-    void sort();
+    void sortByAlphabet();
 
 private:
     WordsProvider wordsProvider;

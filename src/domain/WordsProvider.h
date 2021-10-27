@@ -14,15 +14,13 @@ public:
     explicit WordsProvider(QObject* parent);
 
     void requestWords(const QString& filePath_);
+    void stop();
 
 signals:
     void sendWords(const WordSet& wordSet) const;
 
 protected:
     virtual void run() override;
-
-private:
-    void stop();
 
 private:
     QString filePath;
