@@ -1,6 +1,6 @@
 from conans import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMakeDeps
-#from conan.tools.microsoft import MSBuildToolchain, MSBuildDeps
+from conans import tools
 
 class Top15WordsConan(ConanFile):
     name = "Top15Words"
@@ -18,7 +18,6 @@ class Top15WordsConan(ConanFile):
 
 
     def generate(self):
-
         cmdeps = CMakeDeps(self)
         cmdeps.generate()
 
@@ -26,6 +25,5 @@ class Top15WordsConan(ConanFile):
         cmtch.generate()
 
     def imports(self):
-        self.copy("*.dll", "src/Debug", "bin")
-        #self.copy("*.dylib", "", "lib")
+        self.copy("*", "src/Debug", "bin")
     

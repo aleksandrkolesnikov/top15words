@@ -3,6 +3,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
+#include <QFile>
+
 namespace top15words
 {
 
@@ -21,10 +23,10 @@ void Applet::initializeQmlEngine()
     Q_ASSERT(qmlEngine);
     Q_ASSERT(dataModel);
 
+    QObject::connect(qmlEngine, &QQmlApplicationEngine::quit, &Applet::quit);
+
     qmlEngine->rootContext()->setContextProperty("dataModel", dataModel);
-    //qmlEngine->load(QStringLiteral("qrc:/MainWindow.qml"));
-    const QUrl path = QUrl::fromLocalFile("C:/Users/ivche/Documents/Projects/2gis_test/src/ui/MainWindow.qml");
-    qmlEngine->load(path);
+    qmlEngine->load(QUrl::fromLocalFile("C:/Users/ivche/Documents/Projects/2gis_test/src/ui/MainWindow.qml"));
 
 }
 

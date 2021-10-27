@@ -1,6 +1,7 @@
 #include "DataModel.h"
 #include <QUrl>
 #include <QTimerEvent>
+#include <QFileInfo>
 #include <algorithm>
 
 namespace top15words::domain
@@ -53,13 +54,20 @@ QVariant DataModel::headerData(int section, Qt::Orientation orientation, int rol
     return QVariant{};
 }
 
-void DataModel::setFile(const QUrl& filePath)
+void DataModel::setFile(const QString& filePath)
 {
     beginResetModel();
     top15words.clear();
     endResetModel();
 
-    wordsProvider.requestWords(filePath.toLocalFile());
+    if (QFileInfo::exists(filePath))
+    {
+        wordsProvider.requestWords(filePath);
+    }
+    else
+    {
+        emit incorrectFilePassed();
+    }
 }
 
 void DataModel::wordsReceived(const WordSet& wordSet)

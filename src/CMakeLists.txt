@@ -18,7 +18,10 @@ add_executable(${TARGET_NAME}
     domain/WordsProvider.cpp
     domain/DataModel.h
     domain/DataModel.cpp
-    ${QT_RESOURCES})
+    ui/FilePathEditor.qml
+    ui/MainWindow.qml
+    ${QT_RESOURCES}
+    qml.qrc)
 
 target_link_libraries(${TARGET_NAME}
     Qt5::Core

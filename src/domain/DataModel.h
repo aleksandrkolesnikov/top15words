@@ -23,7 +23,7 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 public slots:
-    void setFile(const QUrl& filePath);
+    void setFile(const QString& filePath);
     int maxFreq() const;
 
 private slots:
@@ -31,6 +31,7 @@ private slots:
 
 signals:
     void maxFreqChanged() const;
+    void incorrectFilePassed() const;
 
 private:
     void updateTop15Words(const WordSet& wordSet);

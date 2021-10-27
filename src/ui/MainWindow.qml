@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtCharts 2.15
+import QtQml 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
 
@@ -15,7 +16,11 @@ ApplicationWindow {
         title: "Please choose a file"
         folder: shortcuts.home
         selectMultiple: false
-        onAccepted: editor.acceptText(fileDialog.fileUrl)
+        onAccepted: {
+            var path = fileDialog.fileUrl.toString()
+            path = path.replace(/^(file:\/{3})/,"")
+            editor.acceptText(path)
+        }
     }
 
     ColumnLayout {
@@ -32,7 +37,18 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
 
-                onAccepted: dataModel.setFile(editor.text)
+                onAccepted:{
+                    editor.border.color = "#87ceeb"
+                    dataModel.setFile(editor.text)
+                }
+
+                Connections {
+                    target: dataModel
+                    function onIncorrectFilePassed() {
+                        editor.border.color = "red"
+                    }
+                }
+
             }
 
             Button {
