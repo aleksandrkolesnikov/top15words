@@ -60,7 +60,7 @@ void DataModel::setFile(const QString& filePath)
     top15words.clear();
     endResetModel();
 
-    if (QFileInfo::exists(filePath))
+    if (const QFileInfo info{filePath}; info.exists() && info.isFile())
     {
         wordsProvider.requestWords(filePath);
     }
