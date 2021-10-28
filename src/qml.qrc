@@ -1,7 +1,0 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-    <qresource>
-        <file>ui/MainWindow.qml</file>
-        <file>ui/FilePathEditor.qml</file>
-    </qresource>
-</RCC>

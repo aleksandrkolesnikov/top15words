@@ -23,11 +23,10 @@ void Applet::initializeQmlEngine()
     Q_ASSERT(qmlEngine);
     Q_ASSERT(dataModel);
 
-    QObject::connect(qmlEngine, &QQmlApplicationEngine::quit, &Applet::quit);
+    QObject::connect(qmlEngine, &QQmlApplicationEngine::quit, this, &Applet::quit, Qt::ConnectionType::QueuedConnection);
 
     qmlEngine->rootContext()->setContextProperty("dataModel", dataModel);
-    qmlEngine->load(QUrl::fromLocalFile("C:/Users/ivche/Documents/Projects/2gis_test/src/ui/MainWindow.qml"));
-
+    qmlEngine->load(QStringLiteral("qrc:/MainWindow.qml"));
 }
 
 }
