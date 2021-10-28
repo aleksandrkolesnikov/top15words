@@ -1,31 +1,28 @@
 #include "WordsProvider.h"
 #include <QFile>
 #include <QTextStream>
+#include <QThreadPool>
 
 namespace top15words::domain
 {
 
 WordsProvider::WordsProvider(QObject* parent)
-    : QThread{parent}
-    , stopCalculating{false}
+    : QObject{parent}
 {
 }
 
-void WordsProvider::requestWords(const QString& filePath_)
+void WordsProvider::requestWords(const QString& filePath)
 {
-    filePath = filePath_;
+    token.reset(new CancelationToken{});
+    auto worker = [this, filePath]() { run(filePath, token); };
 
-    if (isRunning())
-    {
-        stop();
-    }
-
-    stopCalculating = false;
-    start();
+    QThreadPool::globalInstance()->start(std::move(worker));
 }
 
-void WordsProvider::run()
+void WordsProvider::run(const QString& filePath, CancelationTokenPtr token)
 {
+    auto isCanceled = [&token]() { return token.use_count() == 1; };
+
     QFile file{filePath};
     if (!file.open(QIODevice::OpenModeFlag::ReadOnly))
     {
@@ -34,7 +31,7 @@ void WordsProvider::run()
 
     QTextStream stream{&file};
 
-    while (!stream.atEnd() && !stopCalculating)
+    while (!stream.atEnd())
     {
         std::unordered_map<QString, std::uint32_t> wordsRating;
         for (int i = 0; i < 1000; ++i)
@@ -58,16 +55,20 @@ void WordsProvider::run()
                     });
         top15Words.erase(top15Words.cbegin() + std::min(15ull, top15Words.size()), top15Words.cend());
 
+        if (isCanceled())
+        {
+            return;
+        }
+
         emit sendWords(top15Words);
 
-        QThread::msleep(500);
+        QThread::msleep(400);
     }
 }
 
 void WordsProvider::stop()
 {
-    stopCalculating = true;
-    wait();
+    token.reset();
 }
 
 }

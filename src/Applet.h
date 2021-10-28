@@ -1,15 +1,8 @@
 #pragma once
 
+#include "domain/DataModel.h"
 #include <QApplication>
-
-class QQmlApplicationEngine;
-
-namespace top15words::domain
-{
-
-class DataModel;
-
-}
+#include <QQmlApplicationEngine>
 
 namespace top15words
 {
@@ -23,8 +16,8 @@ private:
     void initializeQmlEngine();
 
 private:
-    QQmlApplicationEngine* qmlEngine;
-    domain::DataModel* dataModel;
+    QQmlApplicationEngine qmlEngine;
+    domain::DataModel dataModel;
 };
 
 }

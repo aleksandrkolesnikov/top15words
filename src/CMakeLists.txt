@@ -12,6 +12,7 @@ add_executable(${TARGET_NAME}
     Main.cpp
     Applet.h
     Applet.cpp
+    domain/WordSet.h
     domain/WordsProvider.h
     domain/WordsProvider.cpp
     domain/DataModel.h

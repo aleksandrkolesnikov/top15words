@@ -13,12 +13,8 @@ DataModel::DataModel(QObject* parent)
 {
     top15words.reserve(30);
 
-    QObject::connect(&wordsProvider, &WordsProvider::sendWords, this, &DataModel::wordsReceived);
-}
-
-DataModel::~DataModel()
-{
-    //wordsProvider.quit();
+    QObject::connect(&wordsProvider, &WordsProvider::sendWords, this, &DataModel::wordsReceived,
+                     Qt::ConnectionType::QueuedConnection);
 }
 
 int DataModel::columnCount([[maybe_unused]] const QModelIndex& parent) const

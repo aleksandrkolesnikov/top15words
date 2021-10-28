@@ -1,30 +1,37 @@
 #pragma once
 
 #include "WordSet.h"
-#include <QThread>
+#include <QObject>
+#include <memory>
 
 namespace top15words::domain
 {
 
-class WordsProvider final : public QThread
+class WordsProvider final : public QObject
 {
     Q_OBJECT
+
+private:
+    struct CancelationToken{};
+
+    using CancelationTokenPtr = std::shared_ptr<CancelationToken>;
 
 public:
     explicit WordsProvider(QObject* parent);
 
-    void requestWords(const QString& filePath_);
+    virtual ~WordsProvider() = default;
+
+    void requestWords(const QString& filePath);
     void stop();
 
 signals:
     void sendWords(const WordSet& wordSet) const;
 
-protected:
-    virtual void run() override;
+private:
+    void run(const QString& filePath, CancelationTokenPtr token);
 
 private:
-    QString filePath;
-    bool stopCalculating;
+    CancelationTokenPtr token;
 };
 
 }
