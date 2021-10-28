@@ -25,5 +25,5 @@ class Top15WordsConan(ConanFile):
         cmtch.generate()
 
     def imports(self):
-        self.copy("*", "src/Debug", "bin")
+        self.copy("*", f"src/{self.settings.build_type}", "bin")
     
